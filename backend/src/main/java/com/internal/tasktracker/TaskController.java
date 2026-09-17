@@ -1,6 +1,8 @@
 package com.internal.tasktracker;
 
 import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -8,6 +10,8 @@ import java.util.*;
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 public class TaskController {
+
+    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
 
     private final TaskRepository taskRepository;
 
@@ -22,9 +26,9 @@ public class TaskController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "10") int pageSize) {
 
-        if (page < 1 || pageSize < 1) {
+        if (page < 1 || pageSize < 1 || pageSize > 100) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("error", "page and pageSize must be positive"));
+                    .body(Map.of("error", "page must be positive and pageSize must be between 1 and 100"));
         }
 
         // Normalize query input
@@ -42,9 +46,8 @@ public class TaskController {
             }
         }
 
-        System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
-                + " page=" + page + " pageSize=" + pageSize
-                + " queryLength=" + query.length());
+        log.debug("Searching tasks: q=\"{}\" status={} page={} pageSize={} queryLength={}"
+                , query, normalizedStatus, page, pageSize, query.length());
 
         List<Task> allResults = taskRepository.searchTasks(searchTerm, normalizedStatus);
 

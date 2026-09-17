@@ -9,6 +9,7 @@
 - Updated the SQL reference files so they match the application query.
 - Added backend integration tests for filtering and invalid request parameters.
 - Added debounced, cancellable frontend searches and reset pagination when filters change.
+- Added an explicit archived-task regression test, a safe page-size limit, and structured backend logging.
 
 ## Why I made these fixes
 

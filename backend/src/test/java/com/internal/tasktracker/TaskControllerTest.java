@@ -37,6 +37,14 @@ class TaskControllerTest {
     void rejectsInvalidPagination() throws Exception {
         mockMvc.perform(get("/api/tasks").param("page", "0"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("page and pageSize must be positive"));
+                .andExpect(jsonPath("$.error").value("page must be positive and pageSize must be between 1 and 100"));
+    }
+
+    @Test
+    void excludesArchivedTasksFromSearchResults() throws Exception {
+        mockMvc.perform(get("/api/tasks").param("q", "legacy"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items", hasSize(0)))
+                .andExpect(jsonPath("$.total").value(0));
     }
 }
