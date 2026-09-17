@@ -2,24 +2,26 @@
 
 ## What I changed
 
-- Fixed the task search query. The status and archived filters were not always being applied because the `AND` and `OR` conditions were not grouped correctly.
-- Removed an unnecessary `Thread.sleep()` from the controller. It was making some searches slower than they needed to be.
+- Fixed the task search so the status and archived filters work correctly. The `AND` and `OR` conditions were not grouped correctly before.
+- Removed an unnecessary `Thread.sleep()` from the controller. It was making some searches slower.
 - Added checks for invalid page and page-size values.
-- Added a proper `400 Bad Request` response for unknown status values.
-- Updated the SQL reference files to match the application query.
+- Added a proper `400 Bad Request` response when an unknown status is sent.
+- Updated the SQL reference files so they match the application query.
+- Added backend integration tests for filtering and invalid request parameters.
+- Added debounced, cancellable frontend searches and reset pagination when filters change.
 
-## Why I chose these fixes
+## Why I made these fixes
 
-I found these issues by running the API with different status, search, and pagination values. They either returned incorrect results, made the API slower, or turned bad input into a server error. The fixes were small and did not require changing the overall design.
+I tested the API with different status, search, and pagination values. Some requests returned incorrect results, some were slow, and some turned bad input into a server error instead of returning a clear message. These fixes were small and did not require major changes to the application.
 
 ## What I did not change
 
-The repository still loads all matching tasks and applies pagination in memory. Moving pagination into the database would be a better long-term solution, but it would require a larger change and more testing. I also left unrelated frontend improvements for later.
+The application still loads all matching tasks and applies pagination in memory. Moving pagination into the database would be better in the long run, but it is a larger change that would need more testing. I did not add task editing or creation because this exercise is focused on the existing search flow.
 
 ## Biggest remaining risk
 
-In-memory pagination may become slow and use too much memory if the number of tasks grows significantly.
+If the number of tasks grows significantly, applying pagination in memory could make the application slower and use more memory. The next production improvement would be database-level pagination with a count query.
 
-## Tools used
+## Tools I used
 
-I used the application, `curl`, and Maven to investigate and verify the changes. I also used AI assistance to help review possible bugs, then checked the behavior myself.
+I used the application, `curl`, Maven tests, and the Vite production build to verify the fixes. I used AI to review possible bugs and draft ideas, then checked and adjusted the implementation myself.
