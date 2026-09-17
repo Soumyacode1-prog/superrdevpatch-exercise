@@ -1,21 +1,25 @@
 # Notes
 
-## Summary of changes
+## What I changed
 
-I fixed four issues in the task tracker. I corrected the SQL grouping so archived and status filters work correctly. I removed the artificial delay from search requests. I added validation for invalid pagination values and invalid task statuses.
+- Fixed the task search query. The status and archived filters were not always being applied because the `AND` and `OR` conditions were not grouped correctly.
+- Removed an unnecessary `Thread.sleep()` from the controller. It was making some searches slower than they needed to be.
+- Added checks for invalid page and page-size values.
+- Added a proper `400 Bad Request` response for unknown status values.
+- Updated the SQL reference files to match the application query.
 
-## Why I selected these fixes
+## Why I chose these fixes
 
-These issues affected correctness, response time, and API reliability. They were reproducible with simple API requests and could be fixed without rewriting the application.
+I found these issues by running the API with different status, search, and pagination values. They either returned incorrect results, made the API slower, or turned bad input into a server error. The fixes were small and did not require changing the overall design.
 
 ## What I did not change
 
-I did not replace the in-memory pagination with database-level pagination. This would require a larger repository and API refactor. I also did not change unrelated frontend behavior because it was outside the focused patch.
+The repository still loads all matching tasks and applies pagination in memory. Moving pagination into the database would be a better long-term solution, but it would require a larger change and more testing. I also left unrelated frontend improvements for later.
 
 ## Biggest remaining risk
 
-The backend still loads all matching tasks before applying pagination. This could become inefficient if the database grows significantly.
+In-memory pagination may become slow and use too much memory if the number of tasks grows significantly.
 
 ## Tools used
 
-I used curl to test the API, Maven to build the backend, and AI assistance to review the code and identify possible bugs. I verified the fixes by running the backend and repeating the API tests.
+I used the application, `curl`, and Maven to investigate and verify the changes. I also used AI assistance to help review possible bugs, then checked the behavior myself.
